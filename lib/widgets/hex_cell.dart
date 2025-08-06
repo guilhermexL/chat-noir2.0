@@ -1,0 +1,104 @@
+import 'package:flutter/material.dart';
+import '../models/position.dart';
+import '../models/game_state.dart';
+import '../services/theme_service.dart';
+
+class HexCell extends StatefulWidget {
+  final Position position;
+  final CellType cellType;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const HexCell({
+    super.key,
+    required this.position,
+    required this.cellType,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<HexCell> createState() => _HexCellState();
+}
+
+class _HexCellState extends State<HexCell> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.9,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _animationController.forward().then((_) {
+      _animationController.reverse();
+    });
+    widget.onTap();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: GestureDetector(
+            onTap: _handleTap,
+            child: Container(
+              margin: const EdgeInsets.all(1),
+              decoration: BoxDecoration(
+                color: ThemeService.getCellColor(context, widget.isSelected),
+                border: Border.all(
+                  color: ThemeService.getBorderColor(context),
+                  width: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: _buildCellContent(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCellContent() {
+    switch (widget.cellType) {
+      case CellType.cat:
+        return const Icon(
+          Icons.pets,
+          color: ThemeService.catColor,
+          size: 20,
+        );
+      case CellType.fence:
+        return Container(
+          margin: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: ThemeService.fenceColor,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        );
+      case CellType.empty:
+        return const SizedBox.shrink();
+    }
+  }
+}
