@@ -9,7 +9,7 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_playerScoreKey, playerScore);
     await prefs.setInt(_aiScoreKey, aiScore);
-    
+
     final gamesPlayed = await getGamesPlayed();
     await prefs.setInt(_gamesPlayedKey, gamesPlayed + 1);
   }

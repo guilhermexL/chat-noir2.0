@@ -24,6 +24,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late GameState _gameState;
   Position? _selectedPosition;
+  bool _isLoading = true;
   bool _isAiThinking = false;
   int _totalGamesPlayed = 0;
 
@@ -33,14 +34,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _initializeGame();
-    _loadStats();
-    
+
+    _gameState = GameLogic.createInitialState();
+
+    _loadStatsAndInitializeGame();
+
     _catAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    
+
     _catSlideAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: Offset.zero,
@@ -50,18 +53,30 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     ));
   }
 
-  @override
-  void dispose() {
-    _catAnimationController.dispose();
-    super.dispose();
+  Future<void> _loadStatsAndInitializeGame() async {
+    final playerScore = await StorageService.getPlayerScore();
+    final aiScore = await StorageService.getAiScore();
+    final gamesPlayed = await StorageService.getGamesPlayed();
+
+    setState(() {
+      _totalGamesPlayed = gamesPlayed;
+      _initializeGame(playerScore: playerScore, aiScore: aiScore);
+      _isLoading = false;
+    });
   }
 
-  void _initializeGame() {
-    setState(() {
-      _gameState = GameLogic.createInitialState();
-      _selectedPosition = null;
-      _isAiThinking = false;
-    });
+  void _initializeGame({int playerScore = 0, int aiScore = 0}) {
+    _gameState = GameLogic.createInitialState().copyWith(
+      playerScore: playerScore,
+      aiScore: aiScore,
+    );
+    _selectedPosition = null;
+    _isAiThinking = false;
+  }
+
+  Future<void> _saveStats() async {
+    await StorageService.saveScore(_gameState.playerScore, _gameState.aiScore);
+    await _loadStats();
   }
 
   Future<void> _loadStats() async {
@@ -71,9 +86,32 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _saveStats() async {
-    await StorageService.saveScore(_gameState.playerScore, _gameState.aiScore);
+  void _newGame() async {
+    HapticFeedback.mediumImpact();
+
+    final playerScore = await StorageService.getPlayerScore();
+    final aiScore = await StorageService.getAiScore();
+
+    setState(() {
+      _initializeGame(playerScore: playerScore, aiScore: aiScore);
+    });
+  }
+
+  Future<void> _resetStats() async {
+    await StorageService.resetStats();
     await _loadStats();
+    setState(() {
+      _gameState = _gameState.copyWith(
+        playerScore: 0,
+        aiScore: 0,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _catAnimationController.dispose();
+    super.dispose();
   }
 
   void _onCellTap(Position position) {
@@ -87,7 +125,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
 
     HapticFeedback.lightImpact();
-    
+
     setState(() {
       _selectedPosition = position;
       _gameState = GameLogic.placeFence(_gameState, position);
@@ -110,10 +148,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     await Future.delayed(const Duration(milliseconds: 800));
 
     final aiMove = MinimaxAI.getBestMove(_gameState);
-    
+
     // Anima o movimento do gato
     await _animateCatMovement(_gameState.catPosition, aiMove.newPosition);
-    
+
     setState(() {
       _gameState = GameLogic.moveCat(_gameState, aiMove.newPosition);
       _isAiThinking = false;
@@ -129,7 +167,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Future<void> _animateCatMovement(Position from, Position to) async {
     final dx = (to.col - from.col).toDouble();
     final dy = (to.row - from.row).toDouble();
-    
+
     _catSlideAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: Offset(dx * 0.1, dy * 0.1),
@@ -142,24 +180,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     await _catAnimationController.reverse();
   }
 
-  void _newGame() {
-    HapticFeedback.mediumImpact();
-    _initializeGame();
-  }
-
-  Future<void> _resetStats() async {
-    await StorageService.resetStats();
-    await _loadStats();
-    setState(() {
-      _gameState = _gameState.copyWith(
-        playerScore: 0,
-        aiScore: 0,
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Noir'),

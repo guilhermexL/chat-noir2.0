@@ -5,15 +5,15 @@ import '../models/game_state.dart';
 class GameLogic {
   static const int boardSize = 11;
   static const Position center = Position(5, 5);
-  
+
   // Direções hexagonais simuladas
   static const List<Position> hexDirections = [
-    Position(-1, 0),  // Norte
-    Position(-1, 1),  // Nordeste
-    Position(0, 1),   // Sudeste
-    Position(1, 0),   // Sul
-    Position(1, -1),  // Sudoeste
-    Position(0, -1),  // Noroeste
+    Position(-1, 0), // Norte
+    Position(-1, 1), // Nordeste
+    Position(0, 1), // Sudeste
+    Position(1, 0), // Sul
+    Position(1, -1), // Sudoeste
+    Position(0, -1), // Noroeste
   ];
 
   static GameState createInitialState() {
@@ -28,12 +28,12 @@ class GameLogic {
     // Coloca 12 cercas aleatoriamente
     final random = Random();
     int fencesPlaced = 0;
-    
+
     while (fencesPlaced < 12) {
       final row = random.nextInt(boardSize);
       final col = random.nextInt(boardSize);
       final pos = Position(row, col);
-      
+
       if (board[row][col] == CellType.empty && pos != center) {
         board[row][col] = CellType.fence;
         fencesPlaced++;
@@ -52,14 +52,14 @@ class GameLogic {
 
   static List<Position> getValidMoves(GameState state, Position from) {
     final validMoves = <Position>[];
-    
+
     for (final direction in hexDirections) {
       final newPos = from + direction;
       if (state.isValidPosition(newPos) && state.isEmpty(newPos)) {
         validMoves.add(newPos);
       }
     }
-    
+
     return validMoves;
   }
 
@@ -72,7 +72,8 @@ class GameLogic {
       return state;
     }
 
-    final newBoard = state.board.map((row) => List<CellType>.from(row)).toList();
+    final newBoard =
+        state.board.map((row) => List<CellType>.from(row)).toList();
     newBoard[position.row][position.col] = CellType.fence;
 
     final newState = state.copyWith(
@@ -96,7 +97,8 @@ class GameLogic {
       return state;
     }
 
-    final newBoard = state.board.map((row) => List<CellType>.from(row)).toList();
+    final newBoard =
+        state.board.map((row) => List<CellType>.from(row)).toList();
     newBoard[state.catPosition.row][state.catPosition.col] = CellType.empty;
     newBoard[newPosition.row][newPosition.col] = CellType.cat;
 
@@ -120,7 +122,7 @@ class GameLogic {
   static int getShortestPathToEdge(GameState state, Position from) {
     final visited = <Position>{};
     final queue = <MapEntry<Position, int>>[];
-    
+
     queue.add(MapEntry(from, 0));
     visited.add(from);
 
@@ -135,8 +137,8 @@ class GameLogic {
 
       for (final direction in hexDirections) {
         final newPos = pos + direction;
-        if (state.isValidPosition(newPos) && 
-            state.isEmpty(newPos) && 
+        if (state.isValidPosition(newPos) &&
+            state.isEmpty(newPos) &&
             !visited.contains(newPos)) {
           visited.add(newPos);
           queue.add(MapEntry(newPos, distance + 1));
