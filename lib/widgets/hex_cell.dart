@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/position.dart';
 import '../models/game_state.dart';
 import '../services/theme_service.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HexCell extends StatefulWidget {
   final Position position;
@@ -84,19 +85,35 @@ class _HexCellState extends State<HexCell> with SingleTickerProviderStateMixin {
   Widget _buildCellContent() {
     switch (widget.cellType) {
       case CellType.cat:
-        return const Icon(
-          Icons.pets,
-          color: ThemeService.catColor,
-          size: 20,
-        );
-      case CellType.fence:
         return Container(
-          margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: ThemeService.fenceColor,
-            borderRadius: BorderRadius.circular(2),
+            color: ThemeService.getCellColor(context, widget.isSelected),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/cat.svg',
+              width: 20,
+              height: 20,
+            ),
           ),
         );
+
+      case CellType.fence:
+        return Container(
+          decoration: BoxDecoration(
+            color: ThemeService.getCellColor(context, widget.isSelected),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/fence.svg',
+              width: 20,
+              height: 20,
+            ),
+          ),
+        );
+
       case CellType.empty:
         return const SizedBox.shrink();
     }
