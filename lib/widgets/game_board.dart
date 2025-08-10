@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/position.dart';
 import '../models/game_state.dart';
-import '../services/theme_service.dart';
 import 'hex_cell.dart';
 
 class GameBoard extends StatelessWidget {
@@ -24,11 +23,7 @@ class GameBoard extends StatelessWidget {
         aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              color: ThemeService.getBorderColor(context),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),

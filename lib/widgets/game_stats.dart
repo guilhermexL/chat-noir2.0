@@ -16,70 +16,103 @@ class GameStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(
-              'Estatísticas',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem(
-                  context,
-                  'Jogador',
-                  playerScore.toString(),
-                  Colors.blue,
-                ),
-                _buildStatItem(
-                  context,
-                  'IA',
-                  aiScore.toString(),
-                  Colors.red,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem(
-                  context,
-                  'Movimentos',
-                  moves.toString(),
-                  Colors.orange,
-                ),
-                _buildStatItem(
-                  context,
-                  'Jogos',
-                  gamesPlayed.toString(),
-                  Colors.green,
-                ),
-              ],
-            ),
-          ],
-        ),
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      color: Colors.transparent,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Text(
+            'Estatísticas',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Icon(Icons.person, size: 36),
+                  const SizedBox(height: 4),
+                  Text(
+                    playerScore.toString(),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'X',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onBackground,
+                    ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                children: [
+                  const Icon(Icons.smart_toy, size: 36),
+                  const SizedBox(height: 4),
+                  Text(
+                    aiScore.toString(),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: colorScheme.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _iconStat(
+                context,
+                icon: const Icon(Icons.directions_walk),
+                value: moves.toString(),
+                color: colorScheme.secondary,
+              ),
+              const SizedBox(width: 48),
+              _iconStat(
+                context,
+                icon: const Icon(Icons.sports_esports),
+                value: gamesPlayed.toString(),
+                color: colorScheme.secondary,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, Color color) {
+  Widget _iconStat(
+    BuildContext context, {
+    required Icon icon,
+    required String value,
+    required Color color,
+  }) {
+    final theme = Theme.of(context).textTheme;
     return Column(
       children: [
+        Icon(
+          icon.icon,
+          size: 36,
+          color: color,
+        ),
+        const SizedBox(height: 6),
         Text(
           value,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: color,
+          style: theme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
+            color: color,
           ),
-        ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
     );
