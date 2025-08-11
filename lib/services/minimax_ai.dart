@@ -10,7 +10,7 @@ class MinimaxAI {
 
   static MoveResult getBestMove(GameState state) {
     final validMoves = GameLogic.getValidMoves(state, state.catPosition);
-    
+
     if (validMoves.isEmpty) {
       return MoveResult(
         newPosition: state.catPosition,
@@ -25,7 +25,7 @@ class MinimaxAI {
     for (final move in validMoves) {
       final newState = GameLogic.moveCat(state, move);
       final score = minimax(newState, maxDepth - 1, -infinity, infinity, false);
-      
+
       if (score > bestScore) {
         bestScore = score;
         bestMove = move;
@@ -39,7 +39,8 @@ class MinimaxAI {
     );
   }
 
-  static int minimax(GameState state, int depth, int alpha, int beta, bool isMaximizing) {
+  static int minimax(
+      GameState state, int depth, int alpha, int beta, bool isMaximizing) {
     // Condições de parada
     if (depth == 0 || state.status != GameStatus.playing) {
       return evaluate(state);
@@ -49,23 +50,23 @@ class MinimaxAI {
       // Turno da IA (gato)
       int maxEval = -infinity;
       final validMoves = GameLogic.getValidMoves(state, state.catPosition);
-      
+
       for (final move in validMoves) {
         final newState = GameLogic.moveCat(state, move);
         final eval = minimax(newState, depth - 1, alpha, beta, false);
         maxEval = max(maxEval, eval);
         alpha = max(alpha, eval);
-        
+
         if (beta <= alpha) {
           break; // Poda alfa-beta
         }
       }
-      
+
       return maxEval;
     } else {
       // Turno do jogador (colocar cerca)
       int minEval = infinity;
-      
+
       // Simula possíveis jogadas do jogador
       for (int row = 0; row < GameLogic.boardSize; row++) {
         for (int col = 0; col < GameLogic.boardSize; col++) {
@@ -75,7 +76,7 @@ class MinimaxAI {
             final eval = minimax(newState, depth - 1, alpha, beta, true);
             minEval = min(minEval, eval);
             beta = min(beta, eval);
-            
+
             if (beta <= alpha) {
               break; // Poda alfa-beta
             }
@@ -83,7 +84,7 @@ class MinimaxAI {
         }
         if (beta <= alpha) break;
       }
-      
+
       return minEval;
     }
   }
@@ -102,22 +103,23 @@ class MinimaxAI {
     // 2. Número de movimentos válidos disponíveis
     // 3. Posição estratégica no tabuleiro
 
-    final shortestPath = GameLogic.getShortestPathToEdge(state, state.catPosition);
+    final shortestPath =
+        GameLogic.getShortestPathToEdge(state, state.catPosition);
     final validMoves = GameLogic.getValidMoves(state, state.catPosition).length;
-    
+
     // Quanto menor a distância para a borda, melhor para a IA
     int pathScore = -shortestPath * 10;
-    
+
     // Quanto mais opções de movimento, melhor para a IA
     int mobilityScore = validMoves * 5;
-    
+
     // Bonus por estar próximo das bordas
     int edgeBonus = 0;
     if (state.isEdge(state.catPosition)) {
       edgeBonus = 100;
     } else {
-      final distanceFromCenter = (state.catPosition.row - 5).abs() + 
-                                (state.catPosition.col - 5).abs();
+      final distanceFromCenter =
+          (state.catPosition.row - 5).abs() + (state.catPosition.col - 5).abs();
       edgeBonus = distanceFromCenter * 2;
     }
 

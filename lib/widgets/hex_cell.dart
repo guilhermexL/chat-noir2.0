@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/position.dart';
 import '../models/game_state.dart';
 import '../services/theme_service.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HexCell extends StatefulWidget {
   final Position position;
@@ -54,8 +55,41 @@ class _HexCellState extends State<HexCell> with SingleTickerProviderStateMixin {
     widget.onTap();
   }
 
+  Color _getBackgroundColor() {
+    if (widget.isSelected) {
+      return ThemeService.getCellColor(context, true);
+    }
+
+    switch (widget.cellType) {
+      case CellType.cat:
+        return Colors.yellow.shade300;
+      case CellType.fence:
+        return Colors.grey.shade900;
+      case CellType.empty:
+        return ThemeService.getCellColor(context, false);
+    }
+  }
+
+  Color _getBorderColor() {
+    if (widget.isSelected) {
+      return ThemeService.getBorderColor(context);
+    }
+
+    switch (widget.cellType) {
+      case CellType.cat:
+        return Colors.yellow.shade700;
+      case CellType.fence:
+        return Colors.grey.shade700;
+      case CellType.empty:
+        return ThemeService.getBorderColor(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bgColor = _getBackgroundColor();
+    final borderColor = _getBorderColor();
+
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -66,10 +100,10 @@ class _HexCellState extends State<HexCell> with SingleTickerProviderStateMixin {
             child: Container(
               margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                color: ThemeService.getCellColor(context, widget.isSelected),
+                color: bgColor,
                 border: Border.all(
-                  color: ThemeService.getBorderColor(context),
-                  width: 0.5,
+                  color: borderColor,
+                  width: 3,
                 ),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -84,17 +118,19 @@ class _HexCellState extends State<HexCell> with SingleTickerProviderStateMixin {
   Widget _buildCellContent() {
     switch (widget.cellType) {
       case CellType.cat:
-        return const Icon(
-          Icons.pets,
-          color: ThemeService.catColor,
-          size: 20,
+        return Center(
+          child: SvgPicture.asset(
+            'assets/images/cat.svg',
+            width: 20,
+            height: 20,
+          ),
         );
       case CellType.fence:
-        return Container(
-          margin: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: ThemeService.fenceColor,
-            borderRadius: BorderRadius.circular(2),
+        return Center(
+          child: SvgPicture.asset(
+            'assets/images/fence.svg',
+            width: 20,
+            height: 20,
           ),
         );
       case CellType.empty:

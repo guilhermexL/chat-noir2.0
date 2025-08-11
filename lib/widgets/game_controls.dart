@@ -17,7 +17,15 @@ class GameControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colorScheme.outline, width: 3),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -26,7 +34,7 @@ class GameControls extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(gameStatus).withOpacity(0.1),
+                  color: _getStatusColor(context, gameStatus).withOpacity(0.20),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -34,41 +42,57 @@ class GameControls extends StatelessWidget {
                   children: [
                     Icon(
                       _getStatusIcon(gameStatus),
-                      color: _getStatusColor(gameStatus),
+                      color: _getStatusColor(context, gameStatus),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       _getStatusText(gameStatus),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: _getStatusColor(gameStatus),
-                        fontWeight: FontWeight.bold,
-                      ),
+                            color: _getStatusColor(context, gameStatus),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
               ),
             const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
+                SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: IconButton(
                     onPressed: onNewGame,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Novo Jogo'),
+                    icon: Icon(Icons.refresh, color: colorScheme.primary),
+                    tooltip: 'Novo Jogo',
+                    splashRadius: 24,
                   ),
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: onThemeToggle,
-                  icon: const Icon(Icons.brightness_6),
-                  tooltip: 'Alternar Tema',
+                SizedBox(width: 16),
+                SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: IconButton(
+                    onPressed: onThemeToggle,
+                    icon: Icon(Icons.brightness_6, color: colorScheme.primary),
+                    tooltip: 'Alternar Tema',
+                    splashRadius: 24,
+                  ),
+                ),
+                SizedBox(width: 16),
+                SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: IconButton(
+                    onPressed: onResetStats,
+                    icon: Icon(Icons.delete_forever,
+                        color: colorScheme.secondary),
+                    tooltip: 'Resetar Estatísticas',
+                    splashRadius: 24,
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: onResetStats,
-              child: const Text('Resetar Estatísticas'),
             ),
           ],
         ),
@@ -76,14 +100,15 @@ class GameControls extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(GameStatus status) {
+  Color _getStatusColor(BuildContext context, GameStatus status) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (status) {
       case GameStatus.playerWin:
-        return Colors.green;
+        return Colors.green[600]!;
       case GameStatus.aiWin:
-        return Colors.red;
+        return colorScheme.error;
       case GameStatus.playing:
-        return Colors.blue;
+        return colorScheme.primary;
     }
   }
 
