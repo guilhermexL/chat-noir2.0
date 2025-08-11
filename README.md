@@ -19,7 +19,7 @@ O Chat Noir é um jogo interativo, onde o usuário enfrenta uma inteligência ar
 ## Como Rodar o Projeto
   1. Certifique-se de ter o Flutter instalado (https://flutter.dev).
   2. Clone o repositório do projeto.
-  3. Execute `flutter pub` get para instalar dependências.
+  3. Execute `flutter pub get` para instalar dependências.
   4. Rode o app com `flutter run` em um dispositivo ou emulador compatível.
 
 ## Equipe do Projeto
