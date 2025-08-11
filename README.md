@@ -6,7 +6,11 @@ O Chat Noir é um jogo interativo, onde o usuário enfrenta uma inteligência ar
 
 ## Demonstração
 
-<img src="assets/chatnoir-ui.png" />
+#### 1. Tema dark
+<img src="assets/chatnoir-dark-ui.png" />
+
+#### 2. Tema light
+<img src="assets/chatnoir-light-ui.png" />
 
 ## Tecnologias utilizadas
 
