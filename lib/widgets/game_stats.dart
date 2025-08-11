@@ -49,7 +49,7 @@ class GameStats extends StatelessWidget {
                 'X',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.onBackground,
+                      color: colorScheme.onSurface,
                     ),
               ),
               const SizedBox(width: 16),
@@ -74,7 +74,7 @@ class GameStats extends StatelessWidget {
             children: [
               _iconStat(
                 context,
-                icon: const Icon(Icons.directions_walk),
+                icon: const Icon(Icons.touch_app_rounded),
                 value: moves.toString(),
                 color: colorScheme.secondary,
               ),

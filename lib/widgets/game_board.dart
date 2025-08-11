@@ -17,38 +17,67 @@ class GameBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 11,
-              childAspectRatio: 1,
-            ),
-            itemCount: 121, // 11x11
-            itemBuilder: (context, index) {
-              final row = index ~/ 11;
-              final col = index % 11;
-              final position = Position(row, col);
-              final cellType = gameState.board[row][col];
-              final isSelected = selectedPosition == position;
+    final rows = gameState.board.length;
+    final cols = gameState.board.isNotEmpty ? gameState.board[0].length : 0;
 
-              return HexCell(
-                position: position,
-                cellType: cellType,
-                isSelected: isSelected,
-                onTap: () => onCellTap(position),
-              );
-            },
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final maxW = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.of(context).size.width;
+        final maxH = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : MediaQuery.of(context).size.height * 0.8;
+
+        final cellSizeByHeight = maxH / rows;
+        final cellSizeByWidth = maxW / (cols + 0.5);
+        final cellSize = cellSizeByHeight < cellSizeByWidth
+            ? cellSizeByHeight
+            : cellSizeByWidth;
+
+        final boardWidth = cellSize * (cols + 0.5);
+        final boardHeight = cellSize * rows;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: boardWidth,
+            height: boardHeight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(rows, (row) {
+                final isOddRow = row.isOdd;
+                return SizedBox(
+                  height: cellSize,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (isOddRow) SizedBox(width: cellSize / 2),
+                      ...List.generate(cols, (col) {
+                        final position = Position(row, col);
+                        final cellType = gameState.board[row][col];
+                        final isSelected = selectedPosition == position;
+
+                        return SizedBox(
+                          width: cellSize,
+                          height: cellSize,
+                          child: HexCell(
+                            position: position,
+                            cellType: cellType,
+                            isSelected: isSelected,
+                            onTap: () => onCellTap(position),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                );
+              }),
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

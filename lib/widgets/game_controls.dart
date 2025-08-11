@@ -69,7 +69,7 @@ class GameControls extends StatelessWidget {
                     splashRadius: 24,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 SizedBox(
                   width: 56,
                   height: 56,
@@ -80,7 +80,7 @@ class GameControls extends StatelessWidget {
                     splashRadius: 24,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 SizedBox(
                   width: 56,
                   height: 56,

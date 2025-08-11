@@ -9,7 +9,8 @@ class MinimaxAI {
   static const int infinity = 999999;
 
   static MoveResult getBestMove(GameState state) {
-    final validMoves = GameLogic.getValidMoves(state, state.catPosition);
+    final validMoves =
+        GameLogic.getValidMoves(state, state.catPosition, isAI: true);
 
     if (validMoves.isEmpty) {
       return MoveResult(
@@ -41,15 +42,14 @@ class MinimaxAI {
 
   static int minimax(
       GameState state, int depth, int alpha, int beta, bool isMaximizing) {
-    // Condições de parada
     if (depth == 0 || state.status != GameStatus.playing) {
       return evaluate(state);
     }
 
     if (isMaximizing) {
-      // Turno da IA (gato)
       int maxEval = -infinity;
-      final validMoves = GameLogic.getValidMoves(state, state.catPosition);
+      final validMoves =
+          GameLogic.getValidMoves(state, state.catPosition, isAI: true);
 
       for (final move in validMoves) {
         final newState = GameLogic.moveCat(state, move);
@@ -57,17 +57,13 @@ class MinimaxAI {
         maxEval = max(maxEval, eval);
         alpha = max(alpha, eval);
 
-        if (beta <= alpha) {
-          break; // Poda alfa-beta
-        }
+        if (beta <= alpha) break;
       }
 
       return maxEval;
     } else {
-      // Turno do jogador (colocar cerca)
       int minEval = infinity;
 
-      // Simula possíveis jogadas do jogador
       for (int row = 0; row < GameLogic.boardSize; row++) {
         for (int col = 0; col < GameLogic.boardSize; col++) {
           final pos = Position(row, col);
@@ -77,9 +73,7 @@ class MinimaxAI {
             minEval = min(minEval, eval);
             beta = min(beta, eval);
 
-            if (beta <= alpha) {
-              break; // Poda alfa-beta
-            }
+            if (beta <= alpha) break;
           }
         }
         if (beta <= alpha) break;
@@ -90,30 +84,17 @@ class MinimaxAI {
   }
 
   static int evaluate(GameState state) {
-    // Se o jogo terminou
-    if (state.status == GameStatus.aiWin) {
-      return 1000;
-    }
-    if (state.status == GameStatus.playerWin) {
-      return -1000;
-    }
-
-    // Heurística baseada em:
-    // 1. Distância até a borda mais próxima
-    // 2. Número de movimentos válidos disponíveis
-    // 3. Posição estratégica no tabuleiro
+    if (state.status == GameStatus.aiWin) return 1000;
+    if (state.status == GameStatus.playerWin) return -1000;
 
     final shortestPath =
         GameLogic.getShortestPathToEdge(state, state.catPosition);
-    final validMoves = GameLogic.getValidMoves(state, state.catPosition).length;
+    final validMoves =
+        GameLogic.getValidMoves(state, state.catPosition, isAI: true).length;
 
-    // Quanto menor a distância para a borda, melhor para a IA
     int pathScore = -shortestPath * 10;
-
-    // Quanto mais opções de movimento, melhor para a IA
     int mobilityScore = validMoves * 5;
 
-    // Bonus por estar próximo das bordas
     int edgeBonus = 0;
     if (state.isEdge(state.catPosition)) {
       edgeBonus = 100;

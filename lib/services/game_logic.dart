@@ -6,15 +6,29 @@ class GameLogic {
   static const int boardSize = 11;
   static const Position center = Position(5, 5);
 
-  // Direções hexagonais simuladas
-  static const List<Position> hexDirections = [
-    Position(-1, 0), // Norte
-    Position(-1, 1), // Nordeste
-    Position(0, 1), // Sudeste
-    Position(1, 0), // Sul
-    Position(1, -1), // Sudoeste
-    Position(0, -1), // Noroeste
-  ];
+  static List<Position> getHexNeighbors(int row) {
+    if (row % 2 == 0) {
+      // linha par
+      return [
+        Position(-1, 0), // N
+        Position(-1, 1), // NE
+        Position(0, 1), // SE
+        Position(1, 0), // S
+        Position(0, -1), // SW
+        Position(-1, -1), // NW
+      ];
+    } else {
+      // linha ímpar
+      return [
+        Position(-1, 0), // N
+        Position(-1, 0), // NE
+        Position(0, 1), // SE
+        Position(1, 0), // S
+        Position(0, -1), // SW
+        Position(-1, -1), // NW
+      ];
+    }
+  }
 
   static GameState createInitialState() {
     final board = List.generate(
@@ -22,13 +36,10 @@ class GameLogic {
       (i) => List.generate(boardSize, (j) => CellType.empty),
     );
 
-    // Coloca o gato no centro
     board[center.row][center.col] = CellType.cat;
 
-    // Coloca 12 cercas aleatoriamente
     final random = Random();
     int fencesPlaced = 0;
-
     while (fencesPlaced < 12) {
       final row = random.nextInt(boardSize);
       final col = random.nextInt(boardSize);
@@ -50,11 +61,22 @@ class GameLogic {
     );
   }
 
-  static List<Position> getValidMoves(GameState state, Position from) {
+  static List<Position> getValidMoves(GameState state, Position from,
+      {bool isAI = false}) {
     final validMoves = <Position>[];
+    final directions = getHexNeighbors(from.row);
 
-    for (final direction in hexDirections) {
-      final newPos = from + direction;
+    for (int i = 0; i < directions.length; i++) {
+      if (isAI) {
+        if (from.row % 2 == 0) {
+          if (i == 1 || i == 2) continue;
+        } else {
+          if (i == 4 || i == 5) continue;
+        }
+      }
+
+      final newPos =
+          Position(from.row + directions[i].row, from.col + directions[i].col);
       if (state.isValidPosition(newPos) && state.isEmpty(newPos)) {
         validMoves.add(newPos);
       }
@@ -64,7 +86,7 @@ class GameLogic {
   }
 
   static bool isCatTrapped(GameState state) {
-    return getValidMoves(state, state.catPosition).isEmpty;
+    return getValidMoves(state, state.catPosition, isAI: true).isEmpty;
   }
 
   static GameState placeFence(GameState state, Position position) {
@@ -81,7 +103,6 @@ class GameLogic {
       moves: state.moves + 1,
     );
 
-    // Verifica se o gato está preso
     if (isCatTrapped(newState)) {
       return newState.copyWith(
         status: GameStatus.playerWin,
@@ -105,7 +126,6 @@ class GameLogic {
     GameStatus newStatus = state.status;
     int newAiScore = state.aiScore;
 
-    // Verifica se o gato escapou
     if (state.isEdge(newPosition)) {
       newStatus = GameStatus.aiWin;
       newAiScore = state.aiScore + 1;
@@ -135,8 +155,11 @@ class GameLogic {
         return distance;
       }
 
-      for (final direction in hexDirections) {
-        final newPos = pos + direction;
+      final directions = getHexNeighbors(pos.row);
+
+      for (final direction in directions) {
+        final newPos =
+            Position(pos.row + direction.row, pos.col + direction.col);
         if (state.isValidPosition(newPos) &&
             state.isEmpty(newPos) &&
             !visited.contains(newPos)) {
@@ -146,6 +169,6 @@ class GameLogic {
       }
     }
 
-    return 1000; // Sem caminho disponível
+    return 1000;
   }
 }

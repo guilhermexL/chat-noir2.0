@@ -51,7 +51,7 @@ class _ChatNoirAppState extends State<ChatNoirApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chat Noir',
+      title: 'ChatNoir',
       debugShowCheckedModeBanner: false,
       themeMode: _themeMode,
       theme: ThemeData(
