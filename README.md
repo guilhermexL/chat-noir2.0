@@ -1,4 +1,4 @@
-# chat-noir2.0
+# Chat Noir
 
 ## Visão Geral
 
@@ -17,7 +17,7 @@ O Chat Noir é um jogo interativo, onde o usuário enfrenta uma inteligência ar
 <img src="https://skillicons.dev/icons?i=dart,flutter&perline=15"/>
 
 ## Como Rodar o Projeto
-  1. Certifique-se de ter o Flutter instalado (https://flutter.dev).
+  1. Certifique-se de ter o [Flutter](https://flutter.dev) instalado.
   2. Clone o repositório do projeto.
   3. Execute `flutter pub get` para instalar dependências.
   4. Rode o app com `flutter run` em um dispositivo ou emulador compatível.
@@ -29,4 +29,4 @@ O Chat Noir é um jogo interativo, onde o usuário enfrenta uma inteligência ar
 | ![Foto da Clara Dias](https://github.com/claradiass.png?size=40)     | [Clara Dias](https://github.com/claradiass)     | [Perfil GitHub](https://github.com/claradiass)  |
 | ![Foto do Aniel Melo](https://github.com/anielmelo.png?size=40)      | [Aniel Melo](https://github.com/anielmelo)      | [Perfil GitHub](https://github.com/anielmelo)   |
 | ![Foto do Hugo Diniz](https://github.com/dinizhugo.png?size=40)      | [Hugo Diniz](https://github.com/dinizhugo)      | [Perfil GitHub](https://github.com/dinizhugo)   |
-| ![Foto do Guilherme X L](https://github.com/guilhermexL.png?size=40) | [Guilherme X L](https://github.com/guilhermexL) | [Perfil GitHub](https://github.com/guilhermexL) |
+| ![Foto do Guilherme](https://github.com/guilhermexL.png?size=40)     | [Guilherme S.](https://github.com/guilhermexL)     | [Perfil GitHub](https://github.com/guilhermexL) |
